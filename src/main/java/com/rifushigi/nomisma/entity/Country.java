@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -41,5 +42,5 @@ public class Country {
     private String flagUrl;
 
     @LastModifiedDate
-    private LocalDateTime lastRefreshedAt;
+    private Instant lastRefreshedAt;
 }
