@@ -1,6 +1,6 @@
 package com.rifushigi.nomisma.exception;
 
-import com.rifushigi.nomisma.dto.ErrorResponse;
+import com.rifushigi.nomisma.dto.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,9 +14,9 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ErrorResponse> handleBaseException(
+    public ResponseEntity<ErrorResponseDTO> handleBaseException(
             BaseException ex) {
-        ErrorResponse response = new ErrorResponse(
+        ErrorResponseDTO response = new ErrorResponseDTO(
                 ex.getMessage(),
                 ex.getDetails(),
                 ex.getTimestamp().toString());
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
+    public ResponseEntity<ErrorResponseDTO> handleValidation(
             MethodArgumentNotValidException ex) {
         List<String> details = ex.getBindingResult()
                 .getFieldErrors()
@@ -33,15 +33,15 @@ public class GlobalExceptionHandler {
                 .map( fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .toList();
 
-        ErrorResponse response = new ErrorResponse(ex.getMessage(), details, Instant.now().toString());
+        ErrorResponseDTO response = new ErrorResponseDTO(ex.getMessage(), details, Instant.now().toString());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericError(
+    public ResponseEntity<ErrorResponseDTO> handleGenericError(
             Exception ex) {
-        ErrorResponse response = new ErrorResponse(
+        ErrorResponseDTO response = new ErrorResponseDTO(
                 "Internal Server Error",
                 ex.getMessage(),
                 Instant.now().toString()
