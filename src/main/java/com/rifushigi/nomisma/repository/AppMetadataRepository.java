@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AppMetadataRepository extends JpaRepository<AppMetadata, Long> {
-    Optional<AppMetadata> findByKey(String lastRefreshedAt);
+    Optional<AppMetadata> findByMetaKey(String lastRefreshedAt);
 }

@@ -18,10 +18,10 @@ public class AppMetadataServiceImpl implements AppMetadataService {
     @Override
     public void updateLastRefreshedAt(Instant timestamp) {
         AppMetadata metadata = metadataRepository
-                .findByKey("last_refreshed_at")
+                .findByMetaKey("last_refreshed_at")
                 .orElseGet(() -> {
                     AppMetadata md = new AppMetadata();
-                    md.setKey("last_refreshed_at");
+                    md.setMetaKey("last_refreshed_at");
                     return md;
                 });
 
@@ -32,7 +32,7 @@ public class AppMetadataServiceImpl implements AppMetadataService {
 
     @Override
     public Instant getLastRefreshedAt() {
-        return metadataRepository.findByKey("last_refreshed_at")
+        return metadataRepository.findByMetaKey("last_refreshed_at")
                 .map(m -> Instant.parse(m.getValue()))
                 .orElse(null);
     }
