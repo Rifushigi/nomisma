@@ -23,7 +23,8 @@ public class AppMetadata {
     @Column(nullable = false, unique = true, name = "meta_key")
     private String metaKey;
 
-    private String value;
+    @Column(name = "meta_value")
+    private String metaValue;
 
     @Column(name = "updated_at")
     private Instant updatedAt;

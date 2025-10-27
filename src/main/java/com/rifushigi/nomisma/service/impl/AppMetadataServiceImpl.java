@@ -25,7 +25,7 @@ public class AppMetadataServiceImpl implements AppMetadataService {
                     return md;
                 });
 
-        metadata.setValue(timestamp.toString());
+        metadata.setMetaValue(timestamp.toString());
         metadata.setUpdatedAt(timestamp);
         metadataRepository.save(metadata);
     }
@@ -33,7 +33,7 @@ public class AppMetadataServiceImpl implements AppMetadataService {
     @Override
     public Instant getLastRefreshedAt() {
         return metadataRepository.findByMetaKey("last_refreshed_at")
-                .map(m -> Instant.parse(m.getValue()))
+                .map(m -> Instant.parse(m.getMetaValue()))
                 .orElse(null);
     }
 }
