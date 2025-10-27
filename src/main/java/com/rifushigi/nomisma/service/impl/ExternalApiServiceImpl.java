@@ -25,7 +25,7 @@ public class ExternalApiServiceImpl implements ExternalApiService {
 
     @Override
     public List<ExternalCountryDTO> getCountries() {
-        return Collections.singletonList(countryApi.get()
+        return countryApi.get()
                 .uri("/all?fields=name,capital,region,population,flag,currencies")
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, (request, _) -> {
@@ -35,7 +35,7 @@ public class ExternalApiServiceImpl implements ExternalApiService {
                 })
                 .onStatus(HttpStatusCode::is2xxSuccessful, (request, _) ->
                         log.info("Successfully fetched countries from {}", request.getURI()))
-                .body(ExternalCountryDTO.class));
+                .body(new ParameterizedTypeReference<List<ExternalCountryDTO>> () {});
     }
 
     @Override

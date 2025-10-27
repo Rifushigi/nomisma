@@ -271,7 +271,7 @@ public class CountryServiceImpl implements CountryService {
             country.setCapital(xCountry.capital());
             country.setLastRefreshedAt(now);
 
-            if (xCountry.currencies().isEmpty()) {
+            if (xCountry.currencies() == null) {
                 country.setCurrencyCode(null);
                 country.setExchangeRate(null);
                 country.setEstimatedGdp(0.0);
