@@ -21,6 +21,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.util.*;
@@ -116,41 +118,66 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void generateSummaryImage(long totalCountries, List<CountryGdpProjection> top5ByGdp, String timestamp) {
-        int width = 800;
-        int height = 600;
+        int width = 900;
+        int height = 700;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         // Enable antialiasing for smoother text and shapes
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-        // Background
-        g.setColor(new Color(244, 246, 248)); // light gray-blue
+        // Background with subtle gradient
+        GradientPaint bgGradient = new GradientPaint(
+                0, 0, new Color(250, 251, 252),
+                0, height, new Color(244, 246, 248)
+        );
+        g.setPaint(bgGradient);
         g.fillRect(0, 0, width, height);
 
+        // Header section with colored accent
+        g.setColor(new Color(59, 130, 246)); // blue accent
+        g.fillRect(0, 0, width, 8);
+
         // Title
-        g.setColor(new Color(26, 26, 26));
-        g.setFont(new Font("SansSerif", Font.BOLD, 28));
-        g.drawString("Country Summary", 40, 60);
+        g.setColor(new Color(15, 23, 42)); // darker for better contrast
+        g.setFont(new Font("SansSerif", Font.BOLD, 36));
+        g.drawString("Country Summary", 50, 80);
 
-        // Metadata section
-        g.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        g.setColor(new Color(95, 106, 106));
-        g.drawString("Last Refreshed: " + timestamp, 40, 100);
-        g.drawString("Total Countries: " + totalCountries, 40, 130);
+        // Metadata section with icons (using simple shapes)
+        g.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        g.setColor(new Color(100, 116, 139));
 
-        // Divider line
-        g.setColor(new Color(224, 224, 224));
-        g.fillRect(40, 150, width - 80, 2);
+        // Clock icon simulation
+        g.fillOval(50, 110, 4, 4);
+        g.drawString("Last Refreshed: " + timestamp, 65, 120);
+
+        // Globe icon simulation
+        g.fillOval(50, 140, 4, 4);
+        g.drawString("Total Countries: " + totalCountries, 65, 150);
+
+        // Card container for top 5
+        g.setColor(Color.WHITE);
+        g.fill(new RoundRectangle2D.Double(30, 190, width - 60, 450, 20, 20));
+
+        // Subtle shadow for card
+        g.setColor(new Color(0, 0, 0, 8));
+        g.fill(new RoundRectangle2D.Double(32, 192, width - 64, 450, 20, 20));
 
         // Subtitle
-        g.setColor(new Color(26, 26, 26));
-        g.setFont(new Font("SansSerif", Font.BOLD, 22));
-        g.drawString("Top 5 Countries by Estimated GDP", 40, 190);
+        g.setColor(new Color(15, 23, 42));
+        g.setFont(new Font("SansSerif", Font.BOLD, 24));
+        g.drawString("Top 5 Countries by Estimated GDP", 50, 235);
+
+        // Divider line under subtitle
+        g.setColor(new Color(226, 232, 240));
+        g.fillRect(50, 250, width - 100, 2);
 
         // Chart area setup
-        int barStartY = 230;
-        int barHeight = 35;
+        int barStartY = 300;
+        int barSpacing = 75;
+        int barHeight = 40;
         double maxGdp = top5ByGdp.stream()
                 .mapToDouble(p -> p.getEstimatedGdp() != null ? p.getEstimatedGdp() : 0)
                 .max()
@@ -158,44 +185,76 @@ public class CountryServiceImpl implements CountryService {
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
+        // Professional monochromatic color scheme (shades of blue)
+        Color[] barColors = {
+                new Color(37, 99, 235),    // primary blue
+                new Color(59, 130, 246),   // lighter blue
+                new Color(96, 165, 250),   // even lighter
+                new Color(147, 197, 253),  // lighter still
+                new Color(191, 219, 254)   // lightest blue
+        };
+
         for (int i = 0; i < top5ByGdp.size(); i++) {
             CountryGdpProjection p = top5ByGdp.get(i);
             String name = p.getName();
             double gdp = p.getEstimatedGdp() != null ? p.getEstimatedGdp() : 0;
 
-            int y = barStartY + (i * 70);
+            int y = barStartY + (i * barSpacing);
+
+            // Rank badge
+            g.setColor(new Color(241, 245, 249));
+            g.fillOval(50, y - 25, 35, 35);
+            g.setColor(barColors[i]);
+            g.setFont(new Font("SansSerif", Font.BOLD, 18));
+            String rank = String.valueOf(i + 1);
+            FontMetrics fm = g.getFontMetrics();
+            int rankX = 50 + (35 - fm.stringWidth(rank)) / 2;
+            int rankY = y - 25 + ((35 - fm.getHeight()) / 2) + fm.getAscent();
+            g.drawString(rank, rankX, rankY);
 
             // Country name
-            g.setFont(new Font("SansSerif", Font.PLAIN, 18));
-            g.setColor(new Color(26, 26, 26));
-            g.drawString(name, 40, y);
+            g.setFont(new Font("SansSerif", Font.BOLD, 17));
+            g.setColor(new Color(30, 41, 59));
+            g.drawString(name, 100, y - 5);
 
+            // GDP value with better positioning
             String formattedGdp = formatGdp(gdp, numberFormat);
+            g.setFont(new Font("SansSerif", Font.BOLD, 16));
+            g.setColor(new Color(71, 85, 105));
+            FontMetrics valueFm = g.getFontMetrics();
+            int valueWidth = valueFm.stringWidth(formattedGdp);
+            g.drawString(formattedGdp, width - 80 - valueWidth, y - 5);
 
-            // GDP value
-            g.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            g.setColor(new Color(95, 106, 106));
-            g.drawString(formattedGdp, width - 150, y);
+            // Bar background with rounded corners
+            g.setColor(new Color(241, 245, 249));
+            g.fill(new RoundRectangle2D.Double(100, y + 5, width - 200, barHeight, barHeight, barHeight));
 
-            // Bar background
-            g.setColor(new Color(224, 224, 224));
-            g.fill(new RoundRectangle2D.Double(200, y - 20, 500, barHeight, 10, 10));
-
-            // Bar fill (blue gradient)
+            // Bar fill with a single color
             double ratio = gdp / maxGdp;
-            int barWidth = (int) (500 * ratio);
-            GradientPaint gradient = new GradientPaint(
-                    200, y - 20, new Color(0, 123, 255),
-                    200 + barWidth, y - 20, new Color(0, 198, 255)
-            );
-            g.setPaint(gradient);
-            g.fill(new RoundRectangle2D.Double(200, y - 20, barWidth, barHeight, 10, 10));
+            int barWidth = (int) ((width - 200) * ratio);
+
+            if (barWidth > 0) {
+                // Gradient for depth
+                GradientPaint barGradient = new GradientPaint(
+                        100, y + 5, barColors[i],
+                        100, y + 5 + barHeight, adjustBrightness(barColors[i])
+                );
+                g.setPaint(barGradient);
+                g.fill(new RoundRectangle2D.Double(100, y + 5, barWidth, barHeight, barHeight, barHeight));
+
+                // Add a subtle highlight
+                g.setColor(new Color(255, 255, 255, 40));
+                g.fill(new RoundRectangle2D.Double(100, y + 5, barWidth, (double) barHeight / 2, barHeight, barHeight));
+            }
         }
 
-        // Footer
-        g.setFont(new Font("SansSerif", Font.ITALIC, 14));
-        g.setColor(new Color(158, 158, 158));
-        g.drawString("Generated automatically by Nomisma API", 40, height - 40);
+        // Footer with better styling
+        g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        g.setColor(new Color(148, 163, 184));
+        String footerText = "Generated automatically by Nomisma API";
+        FontMetrics footerFm = g.getFontMetrics();
+        int footerX = (width - footerFm.stringWidth(footerText)) / 2;
+        g.drawString(footerText, footerX, height - 35);
 
         g.dispose();
 
@@ -213,15 +272,24 @@ public class CountryServiceImpl implements CountryService {
         }
     }
 
+    private Color adjustBrightness(Color color) {
+        return new Color(
+                Math.max(0, Math.min(255, (int)(color.getRed() * (float) 0.85))),
+                Math.max(0, Math.min(255, (int)(color.getGreen() * (float) 0.85))),
+                Math.max(0, Math.min(255, (int)(color.getBlue() * (float) 0.85))),
+                color.getAlpha()
+        );
+    }
+
     private String formatGdp(Double gdp, NumberFormat formatter) {
         if (gdp >= 1_000_000_000_000.0) {
-            return formatter.format(gdp / 1_000_000_000_000.0) + " T";
+            return "$" + formatter.format(gdp / 1_000_000_000_000.0) + "T";
         } else if (gdp >= 1_000_000_000.0) {
-            return formatter.format(gdp / 1_000_000_000.0) + " B";
+            return "$" + formatter.format(gdp / 1_000_000_000.0) + "B";
         } else if (gdp >= 1_000_000.0) {
-            return formatter.format(gdp / 1_000_000.0) + " M";
+            return "$" + formatter.format(gdp / 1_000_000.0) + "M";
         } else {
-            return formatter.format(gdp);
+            return "$" + formatter.format(gdp);
         }
     }
 
@@ -274,7 +342,7 @@ public class CountryServiceImpl implements CountryService {
             if (xCountry.currencies() == null) {
                 country.setCurrencyCode(null);
                 country.setExchangeRate(null);
-                country.setEstimatedGdp(0.0);
+                country.setEstimatedGdp(BigDecimal.valueOf(0));
                 data.add(country);
                 continue;
             }
@@ -289,11 +357,14 @@ public class CountryServiceImpl implements CountryService {
                 continue;
             }
 
-            Double rate = exchangeRate.get(currency);
+            double rate = exchangeRate.get(currency);
             double randomMultiplier = (Math.random() * 1001) + 1000;
-            Double eGdp = (xCountry.population() * randomMultiplier) / rate;
+            double computeEGdp = (xCountry.population() * randomMultiplier) / rate;
+            BigDecimal eGdp = BigDecimal.valueOf(computeEGdp).setScale(0, RoundingMode.HALF_UP);
 
-            country.setExchangeRate(rate);
+            country.setExchangeRate(
+                    BigDecimal.valueOf(exchangeRate.get(currency)).setScale(2, RoundingMode.HALF_UP)
+            );
             country.setEstimatedGdp(eGdp);
 
             data.add(country);
