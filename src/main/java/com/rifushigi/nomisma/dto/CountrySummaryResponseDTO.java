@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 
 public record CountrySummaryResponseDTO(
-        @JsonProperty(value = "total_currencies") Long totalCountries,
-        @JsonProperty(value = "last_refreshed_at") Instant lastRefreshedAt
+        @JsonProperty("total_currencies") Long totalCountries,
+        @JsonProperty("last_refreshed_at") Instant lastRefreshedAt
 ) { }
