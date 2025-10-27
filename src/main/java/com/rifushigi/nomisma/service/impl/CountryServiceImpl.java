@@ -36,7 +36,6 @@ public class CountryServiceImpl implements CountryService {
     private final AppMetadataServiceImpl metadataService;
     private final CountryRepository countryRepository;
 
-    // ======================= Logic For Get All Countries (with filters) =================================
     @Override
     public List<Country> getAllCountries(CountryFilterDTO filters) {
         Specification<Country> spec = buildSpecification(filters);
@@ -75,7 +74,6 @@ public class CountryServiceImpl implements CountryService {
             return Sort.by(sortBy).ascending();
         }
     }
-    // ====================================================================================================
 
     @Override
     public Country getCountryByName(String name) {
