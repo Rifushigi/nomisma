@@ -111,7 +111,7 @@ public class CountryServiceImpl implements CountryService {
         Long countriesCount = countryRepository.count();
         Instant lastRefreshed = metadataService.getLastRefreshedAt();
 
-        return new CountrySummaryResponseDTO(countriesCount, lastRefreshed);
+        return new CountrySummaryResponseDTO(countriesCount, lastRefreshed.toString());
     }
 
     @Override
