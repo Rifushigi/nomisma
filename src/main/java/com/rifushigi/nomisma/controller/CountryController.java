@@ -3,6 +3,7 @@ package com.rifushigi.nomisma.controller;
 import com.rifushigi.nomisma.dto.CountryFilterDTO;
 import com.rifushigi.nomisma.dto.CountrySummaryResponseDTO;
 import com.rifushigi.nomisma.entity.Country;
+import com.rifushigi.nomisma.exception.NotFoundException;
 import com.rifushigi.nomisma.service.impl.CountryServiceImpl;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class CountryController {
 
     private final CountryServiceImpl countryService;
 
-    @GetMapping
+    @GetMapping("countries")
     public ResponseEntity<List<Country>> getCountries(CountryFilterDTO filters){
         List<Country> response = countryService.getAllCountries(filters);
         return ResponseEntity.ok(response);
@@ -46,7 +47,7 @@ public class CountryController {
     @DeleteMapping(path = "countries/{name}")
     public ResponseEntity<Void> deleteCountryByName(
             @PathVariable("name")
-            @NotBlank(message = "Country name must not be blank")String name){
+            @NotBlank(message = "Country name must not be blank") String name){
         countryService.deleteCountryByName(name);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -58,9 +59,14 @@ public class CountryController {
     }
 
     @GetMapping("countries/image")
-    public ResponseEntity<InputStreamSource> getSummaryImage() throws FileNotFoundException {
+    public ResponseEntity<InputStreamSource> getSummaryImage() {
         File imageFile = countryService.getSummaryImage();
-        InputStreamSource resource = new InputStreamResource(new FileInputStream(imageFile));
+        InputStreamSource resource;
+        try {
+            resource = new InputStreamResource(new FileInputStream(imageFile));
+        } catch (FileNotFoundException e) {
+            throw new NotFoundException("Summary image not found", e.getMessage());
+        }
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"summary.png\"")
