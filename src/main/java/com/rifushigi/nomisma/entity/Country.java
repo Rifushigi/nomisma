@@ -1,18 +1,16 @@
 package com.rifushigi.nomisma.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Country {
 
     @Id
@@ -36,7 +34,7 @@ public class Country {
     private Double exchangeRate;
 
     @Column(name = "estimated_gdp", nullable = false)
-    private Long estimatedGdp;
+    private Double estimatedGdp;
 
     @Column(name = "flag_url")
     private String flagUrl;
