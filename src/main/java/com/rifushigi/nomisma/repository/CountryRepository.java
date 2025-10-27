@@ -1,6 +1,7 @@
 package com.rifushigi.nomisma.repository;
 
 import com.rifushigi.nomisma.entity.Country;
+import com.rifushigi.nomisma.projection.CountryGdpProjection;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,5 @@ public interface CountryRepository extends JpaRepository<Country, UUID> {
 
     long deleteCountryByName(String name);
 
-    @Query("from Country c select max(c.lastRefreshedAt)")
-    Instant findLastRefreshedAt();
+    List<CountryGdpProjection> findTop5ByOrderByEstimatedGdpDesc();
 }
