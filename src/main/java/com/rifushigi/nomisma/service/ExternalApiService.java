@@ -1,9 +1,12 @@
 package com.rifushigi.nomisma.service;
 
-import java.util.Map;
+import com.rifushigi.nomisma.dto.ExternalCountryDTO;
+import com.rifushigi.nomisma.dto.ExternalExchangeRateDTO;
+
 import java.util.List;
+import java.util.Map;
 
 public interface ExternalApiService {
-    List<Map<String, Object>> getCountries();
-    Map<String, Object> getExchangeRate();
+    List<ExternalCountryDTO> getCountries();
+    ExternalExchangeRateDTO getExchangeRate();
 }
