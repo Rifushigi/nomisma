@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
