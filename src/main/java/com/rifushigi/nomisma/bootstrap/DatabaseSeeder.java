@@ -20,9 +20,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         if (countryRepository.count() == 0) {
             log.info("Seeding countries...");
             countryService.fetchAllCountries();
-            System.out.println("Database seeding completed!");
+            log.info("Database seeding completed!");
         } else {
-            System.out.println("Database already contains data. Skipping seeding.");
+            log.info("Database already contains data. Skipping seeding.");
         }
     }
 }
