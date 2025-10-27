@@ -27,13 +27,13 @@ public class Country {
     @Column(nullable = false)
     private Long population;
 
-    @Column(name = "currency_code", nullable = false)
+    @Column(name = "currency_code")
     private String currencyCode;
 
-    @Column(name = "exchange_rate", nullable = false)
+    @Column(name = "exchange_rate")
     private Double exchangeRate;
 
-    @Column(name = "estimated_gdp", nullable = false)
+    @Column(name = "estimated_gdp")
     private Double estimatedGdp;
 
     @Column(name = "flag_url")
