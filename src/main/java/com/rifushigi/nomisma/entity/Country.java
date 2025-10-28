@@ -37,7 +37,7 @@ public class Country {
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate;
 
-    @Column(name = "estimated_gdp")
+    @Column(name = "estimated_gdp", precision = 20, scale = 2)
     private BigDecimal estimatedGdp;
 
     @Column(name = "flag_url")
