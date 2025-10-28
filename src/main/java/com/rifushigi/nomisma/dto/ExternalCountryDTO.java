@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public record ExternalCountryDTO(
         String name,
         String capital,
@@ -13,5 +12,6 @@ public record ExternalCountryDTO(
         List<Currency> currencies,
         String flag
 ) {
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Currency(String code) { }
 }
