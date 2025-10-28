@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequiredArgsConstructor
@@ -77,7 +76,7 @@ public class CountryController {
 
     @PostMapping("countries/refresh")
     public ResponseEntity<Void> refresh(){
-        CompletableFuture.runAsync(countryService::refreshCountries);
+        countryService.refreshCountries();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
