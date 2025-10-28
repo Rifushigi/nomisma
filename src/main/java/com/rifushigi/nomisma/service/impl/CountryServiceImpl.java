@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.scheduling.annotation.Async;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -335,7 +334,6 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    @Async
     public void refreshCountries() {
         fetchAllCountries();
         long totalCountries = countryRepository.count();
