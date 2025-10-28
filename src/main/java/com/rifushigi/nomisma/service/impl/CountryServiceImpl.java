@@ -9,6 +9,7 @@ import com.rifushigi.nomisma.exception.NotFoundException;
 import com.rifushigi.nomisma.projection.CountryGdpProjection;
 import com.rifushigi.nomisma.repository.CountryRepository;
 import com.rifushigi.nomisma.service.CountryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -131,6 +132,7 @@ public class CountryServiceImpl implements CountryService {
         return country;
     }
 
+    @Transactional
     @Override
     public void deleteCountryByName(String name) {
         long deletedCount = countryRepository.deleteByName(name);
