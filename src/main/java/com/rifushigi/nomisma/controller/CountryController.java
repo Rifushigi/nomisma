@@ -79,6 +79,5 @@ public class CountryController {
     public ResponseEntity<Void> refresh(){
         CompletableFuture.runAsync(countryService::refreshCountries);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 }
