@@ -71,20 +71,9 @@ public class CountryServiceImpl implements CountryService {
             return Sort.unsorted();
         }
         String sortDirection = sortInfo[1];
-        String sortBy = sortInfo[0];
+        String entityField = getEntityField(sortInfo);
 
-        // Map API field names to entity fields
-        Map<String, String> sortFieldMap = new HashMap<>();
-        sortFieldMap.put("name", "name");
-        sortFieldMap.put("population", "population");
-        sortFieldMap.put("currency_code", "currencyCode");
-        sortFieldMap.put("exchange_rate", "exchangeRate");
-        sortFieldMap.put("estimated_gdp", "estimatedGdp");
-        sortFieldMap.put("gdp", "estimatedGdp");
-
-        String entityField = sortFieldMap.getOrDefault(sortBy, sortBy);
-
-        // Validate the field exists on the entity to prevent 500s
+        // Validate the field exists on the entity to prevent 500 s
         try {
             Country.class.getDeclaredField(entityField);
         } catch (NoSuchFieldException e) {
@@ -96,6 +85,21 @@ public class CountryServiceImpl implements CountryService {
         } else {
             return Sort.by(entityField).ascending();
         }
+    }
+
+    private static String getEntityField(String[] sortInfo) {
+        String sortBy = sortInfo[0];
+
+        // Map API field names to entity fields
+        Map<String, String> sortFieldMap = new HashMap<>();
+        sortFieldMap.put("name", "name");
+        sortFieldMap.put("population", "population");
+        sortFieldMap.put("currency_code", "currencyCode");
+        sortFieldMap.put("exchange_rate", "exchangeRate");
+        sortFieldMap.put("estimated_gdp", "estimatedGdp");
+        sortFieldMap.put("gdp", "estimatedGdp");
+
+        return sortFieldMap.getOrDefault(sortBy, sortBy);
     }
 
     @Override
