@@ -341,7 +341,9 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void refreshCountries() {
+        log.info("Refresh::started");
         fetchAllCountries();
+        log.info("Refresh::Done refreshing");
         long totalCountries = countryRepository.count();
         String lastRefreshed = metadataService.getLastRefreshedAt().toString();
         List<CountryGdpProjection> topFiveByGdp = countryRepository.findTop5ByOrderByEstimatedGdpDesc();
@@ -361,6 +363,7 @@ public class CountryServiceImpl implements CountryService {
                             c -> c
                 ));
 
+        log.info("Fetch::start looping through countries");
         for (ExternalCountryDTO xCountry : countries) {
             String countryName = xCountry.name().toLowerCase();
             Country country = existingCountries.getOrDefault(countryName, new Country());
