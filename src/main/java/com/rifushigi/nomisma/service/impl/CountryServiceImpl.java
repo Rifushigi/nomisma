@@ -340,6 +340,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Transactional
     public void refreshCountries() {
         log.info("Refresh::started");
         fetchAllCountries();
