@@ -20,7 +20,7 @@ public interface CountryRepository extends JpaRepository<Country, UUID> {
 
     Optional<Country> getCountryByName(String name);
 
-    long deleteCountryByName(String name);
+    long deleteByName(String name);
 
     List<CountryGdpProjection> findTop5ByOrderByEstimatedGdpDesc();
 }
