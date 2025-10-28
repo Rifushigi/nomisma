@@ -17,15 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Controller
 @RequiredArgsConstructor
@@ -81,17 +77,8 @@ public class CountryController {
 
     @PostMapping("countries/refresh")
     public ResponseEntity<Void> refresh(){
-        CompletableFuture<Void> task = CompletableFuture.runAsync(countryService::refreshCountries);
-        try {
-            task.get(5, TimeUnit.SECONDS);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (TimeoutException e) {
-            return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-        } catch (ExecutionException e) {
-            return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-        }
+        CompletableFuture.runAsync(countryService::refreshCountries);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 }
