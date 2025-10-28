@@ -133,7 +133,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void deleteCountryByName(String name) {
-        long deletedCount = countryRepository.deleteCountryByName(name);
+        long deletedCount = countryRepository.deleteByName(name);
         if (deletedCount == 0) {
             throw new NotFoundException("Failed to delete country", "No country found with name: " + name);
         }
