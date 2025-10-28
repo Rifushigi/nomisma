@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -50,7 +51,7 @@ public class CountryServiceImpl implements CountryService {
 
         if (filters.currency() != null && !filters.currency().isBlank()) {
             spec = spec.and((root, _, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("currency"), filters.currency()));
+                    criteriaBuilder.equal(root.get("currencyCode"), filters.currency()));
         }
 
         if (filters.region() != null && !filters.region().isBlank()) {
@@ -67,13 +68,34 @@ public class CountryServiceImpl implements CountryService {
         }
 
         String[] sortInfo = filters.sort().split("_");
+        if (sortInfo.length != 2) {
+            return Sort.unsorted();
+        }
         String sortDirection = sortInfo[1];
         String sortBy = sortInfo[0];
 
+        // Map API field names to entity fields
+        Map<String, String> sortFieldMap = new HashMap<>();
+        sortFieldMap.put("name", "name");
+        sortFieldMap.put("population", "population");
+        sortFieldMap.put("currency_code", "currencyCode");
+        sortFieldMap.put("exchange_rate", "exchangeRate");
+        sortFieldMap.put("estimated_gdp", "estimatedGdp");
+        sortFieldMap.put("gdp", "estimatedGdp");
+
+        String entityField = sortFieldMap.getOrDefault(sortBy, sortBy);
+
+        // Validate the field exists on the entity to prevent 500s
+        try {
+            Country.class.getDeclaredField(entityField);
+        } catch (NoSuchFieldException e) {
+            return Sort.unsorted();
+        }
+
         if (sortDirection.equalsIgnoreCase("desc")) {
-            return Sort.by(sortBy).descending();
+            return Sort.by(entityField).descending();
         } else {
-            return Sort.by(sortBy).ascending();
+            return Sort.by(entityField).ascending();
         }
     }
 
@@ -91,6 +113,12 @@ public class CountryServiceImpl implements CountryService {
         }
         if (country.getCurrencyCode() == null || country.getCurrencyCode().trim().isEmpty()) {
             invalidFields.put("currency_code", "Field 'currency_code' is missing or empty");
+        }
+        if (country.getExchangeRate() == null) {
+            invalidFields.put("exchange_rate", "Field 'exchange_rate' is missing");
+        }
+        if (country.getEstimatedGdp() == null) {
+            invalidFields.put("estimated_gdp", "Field 'estimated_gdp' is missing");
         }
 
         if (!invalidFields.isEmpty()) {
@@ -307,6 +335,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Async
     public void refreshCountries() {
         fetchAllCountries();
         long totalCountries = countryRepository.count();
