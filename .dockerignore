@@ -1,0 +1,34 @@
+# === Maven build artifacts ===
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# === Logs and temp files ===
+*.log
+*.tmp
+*.swp
+
+# === Environment and secret files ===
+.env
+*.env
+*.key
+*.pem
+*.p12
+
+# === OS and IDE clutter ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# === Git and CI ===
+.git/
+.gitignore
+.github/
+.gitlab-ci.yml
+
+# === Documentation and local files ===
+README.md
+*.md
+docs/
