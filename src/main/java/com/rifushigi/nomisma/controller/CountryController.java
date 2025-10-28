@@ -69,7 +69,7 @@ public class CountryController {
         }
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"summary.png\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"summary.png\"")
                 .contentLength(imageFile.length())
                 .contentType(MediaType.IMAGE_PNG)
                 .body(resource);
